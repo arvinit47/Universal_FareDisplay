@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Secure Serial Monitor</title>
+    <style>
+      /* Your existing styles */
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Secure Serial Monitor</h1>
+      <div id="status">Status: Connected</div>
+      <div id="dataDisplay"></div>
+      <div id="error" class="error"></div>
+    </div>
+
+    <script>
+      const dataDisplay = document.getElementById("dataDisplay");
+      const errorDiv = document.getElementById("error");
+
+      window.electronAPI.onSerialData((event, data) => {
+        // const p = document.createElement("p");
+        // p.textContent = data;
+        // dataDisplay.appendChild(p);
+
+        console.log(data);
+        dataDisplay.innerHTML = `
+    <h2>Train Ticket Details</h2>
+
+    ${
+      data.source_station
+        ? `<p><strong>Source Station:</strong> ${data.source_station.eng_name} (${data.source_station.station_code})</p>`
+        : ""
+    }
+
+    ${
+      data.destination_station
+        ? `<p><strong>Destination Station:</strong> ${data.destination_station.eng_name} (${data.destination_station.station_code})</p>`
+        : ""
+    }
+
+    ${
+      data.fare
+        ? `<p><strong>Fare:</strong> ${data.fare.fareData}</p>`
+        : ""
+    }
+    
+    ${
+      data.type_of_trian
+        ? `<p><strong>Train Type:</strong> ${data.type_of_trian.description} (${data.type_of_trian.value})</p>`
+        : ""
+    }
+    
+    ${data.class ? `<p><strong>Class:</strong> ${data.class.Class}</p>` : ""}
+    
+    ${
+      data.transaction_type
+        ? `<p><strong>Transaction Type:</strong> ${data.transaction_type.transactionType}</p>`
+        : ""
+    }
+    
+    ${
+      data.operator_details
+        ? `
+        <p><strong>Operator:</strong> ${data.operator_details.Operator}</p>
+        <p><strong>Terminal:</strong> ${data.operator_details.Terminal}</p>
+        <p><strong>Window No:</strong> ${data.operator_details.WindowNo}</p>
+        <p><strong>Shift No:</strong> ${data.operator_details.ShiftNo}</p>
+    `
+        : ""
+    }
+    
+    ${
+      data.cancellation_refund_amount
+        ? `<p><strong>Refund Amount:</strong> ${data.cancellation_refund_amount.amount}</p>`
+        : ""
+    }
+    
+    ${
+      data.payment_gateway
+        ? `<p><strong>Payment Gateway:</strong> <a href="${data.payment_gateway.paymentGateway}" target="_blank">${data.payment_gateway.paymentGateway}</a></p>`
+        : ""
+    }
+    
+    ${
+      data.qr_code
+        ? `
+        <p><strong>QR Code:</strong></p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+          data.qr_code.QRCode
+        )}&size=150x150" alt="QR Code">
+    `
+        : ""
+    }
+`;
+      });
+
+      window.electronAPI.onClearScreen((event, data) => {
+        console.log("data_94: ", data);
+        dataDisplay.innerHTML = "<p>SCREEN CLEARED</p>";
+      });
+
+      window.electronAPI.onSerialError((event, error) => {
+        errorDiv.textContent = `Error: ${error}`;
+      });
+
+      // Example of getting ports list
+      window.electronAPI.getPorts().then((ports) => {
+        console.log("Available ports:", ports);
+      });
+    </script>
+  </body>
+</html>

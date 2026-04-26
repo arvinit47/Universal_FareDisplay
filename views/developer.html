@@ -1,0 +1,99 @@
+<html>
+  <body>
+    <form id="developer-form">
+      <label for="openDevTools">Open DevTools:</label>
+      <select id="openDevTools">
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+
+      <br />
+
+      <label for="alwaysOnTop">Always On Top:</label>
+      <select id="alwaysOnTop">
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+
+      <br />
+
+      <label for="fullscreen"
+        >FullScreen: <small>Runs in full-screen</small></label
+      >
+      <select id="fullscreen">
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+      <br />
+
+      <label for="kiosk"
+        >kiosk: <small> Locks the app in kiosk mode </small></label
+      >
+      <select id="kiosk">
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+      <br />
+
+      <label for="frame"
+        >frame: <small> Runs in full-screen without toolbar </small></label
+      >
+      <select id="frame">
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+
+      <br />
+      <br />
+
+      <button type="submit">Save Settings</button>
+    </form>
+
+    <script>
+      window.electronAPI.onSettingsData((event, data) => {
+        const elementIds = [
+          "openDevTools",
+          "alwaysOnTop",
+          "fullscreen",
+          "kiosk",
+          "frame",
+        ];
+
+        elementIds.forEach((el) => {
+          document.getElementById(el).value = data[el];
+        });
+      });
+
+      document
+        .getElementById("developer-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const settings = {
+            openDevTools:
+              document.getElementById("openDevTools").value === "true",
+            alwaysOnTop:
+              document.getElementById("alwaysOnTop").value === "true",
+            fullscreen: document.getElementById("fullscreen").value === "true",
+            kiosk: document.getElementById("kiosk").value === "true",
+            frame: document.getElementById("frame").value === "true",
+          };
+
+          saveSettings(settings);
+        });
+
+      async function saveSettings(formData) {
+        try {
+          const response = await window.electronAPI.saveSettings(formData);
+          if (response.result === 1) {
+            window.electronAPI.changeScreen("index");
+          } else {
+            alert("Error saving details. Please contact Team");
+          }
+        } catch (error) {
+          console.error("Failed to save settings:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

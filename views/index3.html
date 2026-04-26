@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Indian Railways</title>
+    <style>
+      :root {
+        --black: #0d0d0d;
+        --white: #ffffff;
+        --accent: #e60000;
+        --yellow: #ffd400;
+        --muted: #333;
+        --cell-height: calc(100vh / 8);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        font-family: Arial, sans-serif;
+        background-color: #f8f8f8;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .form-container {
+        width: 100%;
+        height: 100vh;
+        border: 2px solid #000;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #ccc;
+        color: rgb(0, 0, 0);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--accent);
+        
+      }
+
+      .header-left img {
+        /*height: 50px;*/
+        height: 80px;
+      }
+
+      .header-left h1 {
+        /*font-size: 2.5rem;*/
+        font-size: 2.5rem;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        text-transform: uppercase;
+        margin: 0;
+      }
+
+      .header-right .zone-station {
+        /*font-size: 1.3rem;*/
+        font-size: 1.5rem;
+        font-weight: 800;
+        text-align: right;
+        font-family: 'Montserrat', sans-serif;
+         color: #333333;   /* Charcoal */
+         letter-spacing: 0px
+      }
+
+      .fare-header {
+        background-color: #000;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        
+        
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1.4rem;
+        font-weight: 400;
+        table-layout: fixed;
+        height: -webkit-fill-available;
+      }
+
+      th {
+        background-color: #f4f4f4;
+        font-weight: 900;
+        width: 20%;
+        text-align: center;
+        border: 1px solid #141414;
+        
+        
+      }
+
+      td {
+        border: 2px solid #c7baba;
+        padding: 20px;
+        text-align: center;
+        background-color: #111;
+        color: #fff;
+        width: 25%;
+      }
+        
+
+      tr {
+        /*height: var(--cell-height);*/
+        --cell-height: 80px;
+      }
+      
+      
+
+      .highlight {
+        font-size: 2.5rem;
+        font-weight:bolder;
+        color: red;
+        text-align: center;
+      }
+
+      .footer {
+        background-color: #000;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+      }
+
+      .scan {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+        min-height: 120px;
+      }
+
+      .qr-code {
+        border: 1px solid #ddd;
+        background-color: white;
+        width: 250px;
+        height: 250px;
+      }
+     
+
+      @media (max-width: 768px) {
+        .qr-code {
+          width: 150px;
+          height: 150px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .qr-code {
+          width: 100px;
+          height: 100px;
+        }
+      }
+
+      td:empty::before {
+        content: "-";
+        color: #999;
+      }
+
+      .meta-right {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        align-items: center;
+        /*gap: 28px;*/
+        font-weight: 550;
+        font-size: 25px;
+        width: 100%;
+      }
+   
+
+      .meta-right .label {
+        color: var(--yellow);
+        margin-right: 6px;
+      }
+
+      .meta-right .value {
+        color: var(--accent);
+        font-weight: 900;
+      }
+
+      /* ✅ Responsive adjustments */
+      @media (max-width: 1024px) {
+        :root {
+          --cell-height: calc(100vh / 10); /* Smaller cell height on tablets */
+        }
+
+        .header-left h1 {
+          font-size: 2rem;
+        }
+
+      
+      }
+
+      @media (max-width: 768px) {
+        :root {
+          --cell-height: calc(80vh / 12); /* Smaller cell height on mobile */
+        }
+
+        .header h1 {
+          font-size: 1.4rem;
+        }
+
+        .fare-header {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        table {
+          font-size: 1rem;
+        }
+
+        .footer {
+          flex-direction: column;
+          text-align: center;
+          gap: 10px;
+        }
+
+      
+
+        .meta-right {
+          flex-direction: column;
+          font-size: 18px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        :root {
+          --cell-height: calc(
+            100vh / 14
+          ); /* Even smaller cells for small screens */
+        }
+
+        .header h1 {
+          font-size: 1.1rem;
+        }
+
+        table {
+          font-size: 0.85rem;
+        }
+
+        .qr-code {
+          width: 100px;
+          height: 100px;
+        }
+
+        th,
+        td {
+          padding: 6px;
+        }
+      }
+
+      .fare-input-marquee {
+  background-color: #000;
+  color:red;
+  height: 60px;                /* match fare-header */
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.marquee-content {
+  display: inline-block;
+  white-space: nowrap;         /* prevent wrapping */
+  padding-left: 100%;          /* start from right */
+  animation: marquee 15s linear infinite; /* continuous animation */
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+/* Keyframes for seamless loop */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fare-input-marquee { height: 50px; }
+  .marquee-content { font-size: 2rem; }
+}
+
+
+    </style>
+  </head>
+
+  <body>
+    <div class="form-container">
+      <div class="content">
+        <div class="header">
+          <div class="header-left">
+            <img
+              src="./images/indian-railways-logo.png"
+              alt="Indian Railways Logo"
+            />
+            <h1>TICKET INFORMATION</h1>
+          </div>
+
+          <div class="header-right">
+            <div class="zone-station">
+              <span id="display_zone"></span>
+              <br />
+              <span id="station"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fare-header">
+          <div class="meta-right">
+            <div>
+              <span class="label">TERMINAL NO:</span>
+              <span class="value" id="terminal_no"></span>
+            </div>
+            <div>
+              <span class="label">WINDOW NO:</span>
+              <span class="value" id="window_no"></span>
+            </div>
+            <div>
+              <span class="label">SHIFT NO:</span>
+              <span class="value" id="shift_no"></span>
+            </div>
+          </div>
+        </div>
+
+        <table>
+          <tr>
+            <th>From <br />"कहाँ से"</th>
+            <td id="source_station"></td>
+            <th>To <br />"कहाँ तक"</th>
+            <td id="destination_station"></td>
+          </tr>
+          <tr>
+            <th>Date <br />"दिनांक"</th>
+            <td id="display_date"></td>
+            <th>Fare <br />"किराया"</th>
+            <td class="highlight" id="display_fare"></td>
+          </tr>
+          <tr>
+            <th>Type of Train <br />"ट्रेन के प्रकार"</th>
+            <td id="display_train_type"></td>
+
+            <!-- <th>Child(बच्चे)</th>
+            <td id="display_child"></td> -->
+            <th style="padding: 0%;">
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  grid-template-rows: 1fr 1fr;
+                  gap: 2px;
+                  width: 100%;
+                  height: 100px;
+                "
+              >
+                <div
+                  style="
+                    border: 1px solid;
+                    padding-top: 10%;
+                    text-align: center;
+                  "
+                >
+                  Adult
+                </div>
+                <div
+                  style="
+                    border: 1px solid;
+                    padding-top: 10%;
+                    text-align: center;
+                  "
+                >
+                  Children
+                </div>
+                <div
+                  style="
+                    border: 1px solid;
+                    text-align: center;
+                    padding-top: 10%;
+                    color: #fff;
+                    background-color: #000;
+                  "
+                  id="display_adult"
+                ></div>
+                <div
+                  style="
+                    border: 1px solid;
+                    text-align: center;
+                    padding-top: 10%;
+                    color: #fff;
+                    background-color: #000;
+                  "
+                  id="display_child"
+                ></div>
+              </div>
+            </th>
+            <td rowspan="4">
+              <div class="scan">
+                <img
+                  class="qr-code"
+                  id="display_qr_code"
+                  src=""
+                  alt="QR Code"
+                />
+                <p>Scan this QR to pay</p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>Transaction Type</th>
+            <td id="display_transaction_type"></td>
+            <!-- <th>Class</th> -->
+              <th style="padding: 0px">
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr;
+                  grid-template-rows: 1fr 1fr;
+                  gap: 1px;
+                  width: 100%;
+                  height: 100px;
+                "
+              >
+                <div
+                 style="
+                 border: 1px solid;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                   font-weight: bold;
+                  "
+                >
+                  Class
+                </div>
+                <div
+                     style="
+                      border: 1px solid;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      color: #fff;
+                      text-align: center;
+                      background-color: #000;
+                       "
+                  id="display_class"
+                ></div>
+              </div>
+              </th>
+          </tr>
+          <tr>
+             <th>Pay Mode</th>
+            <td colspan="2" id="display_pay_mode"></td>
+            <!-- <th>Operator Name</th>
+            <td colspan="2" id="display_operator_name"></td> -->
+
+            <!-- <td id="display_class"></td> -->
+          </tr>
+          <tr>
+             <th>Operator Name</th>
+            <td colspan="2" id="display_operator_name"></td>
+            <!-- <th>Pay Mode</th>
+            <td colspan="2" id="display_pay_mode"></td> -->
+
+            <!-- <th>Shift No:(शिफ्ट नंबर)</th> -->
+            <!-- <td id="shift_no"></td> -->
+          </tr>
+        </table>
+        <div class="fare-input-marquee" id="message">
+  <div class="marquee-content" >
+  </div>
+</div>
+
+
+
+        
+      </div>
+      <!-- <div id="data"></div> -->
+    </div>
+
+    <script src="../vendor/qrcode.min.js"></script>
+    <script>
+      function setText(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerText = value == null ? "" : String(value);
+      }
+      window.electronAPI.onSettingsData((event, settings) => {
+        setText("display_zone", settings.zone || "INDIAN RAILWAY");
+        setText("display_operator_name", settings.operator || "");
+        setText("station", settings.station || "");
+        setText("window_no", settings.windowNo || settings.counter || "");
+        // ✅ Add this for marquee
+  const marqueeDiv = document.querySelector('#message .marquee-content');
+  marqueeDiv.textContent = settings.message || "";
+      });
+      window.electronAPI.onSerialData((event, data) => {
+        //console.log("data in index 3", data);
+        // const dataDiv = document.getElementById("data");
+        // dataDiv.textContent = JSON.stringify(data, null, 2);
+        // source_station,
+        if (data.source_station) {
+          const sourceEl = document.getElementById("source_station");
+          sourceEl.textContent = `${data.source_station.eng_name} (${data.source_station.station_code})`;
+        }
+
+        // destination_station
+        if (data.destination_station) {
+          const sourceEl = document.getElementById("destination_station");
+          sourceEl.textContent = `${data.destination_station.eng_name} (${data.destination_station.station_code})`;
+        }
+
+        // date and month
+        if (data.date && data.month) {
+          const displayDateEl = document.getElementById("display_date");
+          displayDateEl.textContent = `${data.date.dateData}/${data.month.monthData}`;
+        }
+
+        // display_adult
+        if (data.adult) {
+          const adultEl = document.getElementById("display_adult");
+          adultEl.textContent = `${data.adult.adultData}`;
+        }
+
+        // display_child
+        if (data.child) {
+          const childEl = document.getElementById("display_child");
+          childEl.textContent = `${data.child.childData}`;
+        }
+
+        // display_class
+        if (data.class) {
+          const classEl = document.getElementById("display_class");
+          classEl.textContent = `${data.class.Class}`;
+        }
+        // display_train_type
+        if (data.type_of_trian) {
+          const el = document.getElementById("display_train_type");
+          el.textContent = `${data.type_of_trian.value} (${data.type_of_trian.description})`;
+        }
+
+        // display_fare
+        if (data.fare) {
+          const el = document.getElementById("display_fare");
+          el.textContent = `${data.fare.fareData}`;
+        }
+
+        // display_transaction_type
+        if (data.transaction_type) {
+          const el = document.getElementById("display_transaction_type");
+          el.textContent = `${data.transaction_type.transactionType}`;
+        }
+
+        // display_pay_mode
+        if (data.payment_gateway) {
+          const el = document.getElementById("display_pay_mode");
+          el.textContent = `${data.payment_gateway.paymentGateway}`;
+        }
+
+        // display_operator_name
+        if (data.operator_details) {
+          const el = document.getElementById("display_operator_name");
+          el.textContent = `${data.operator_details.Operator}`;
+        }
+        //display terminal_no
+        if (data.operator_details) {
+          const el = document.getElementById("terminal_no");
+          el.textContent = `${data.operator_details.Terminal}`;
+        }
+
+        // display window_no
+        if (data.operator_details) {
+          const el = document.getElementById("window_no");
+          el.textContent = `${data.operator_details.WindowNo}`;
+        }
+        // display shift_no
+        if (data.operator_details) {
+          const el = document.getElementById("shift_no");
+          el.textContent = `${data.operator_details.ShiftNo}`;
+        }
+
+        // display_qr_code
+        if (data.qr_code && data.qr_code.QRCode) {
+          const el = document.getElementById("display_qr_code");
+
+          // toDataURL returns a PNG data URL
+          QRCode.toDataURL(data.qr_code.QRCode, { margin: 1, width: 150 })
+            .then((url) => {
+              el.src = url;
+              el.style.display = "block";
+            })
+            .catch((err) => {
+              console.error("QR generation failed:", err);
+            });
+        }
+
+
+      });
+
+      window.electronAPI.onClearScreen((event, data) => {
+        const elements = [
+          "source_station",
+          "destination_station",
+          "display_date",
+          "display_adult",
+          "display_child",
+          "display_class",
+          "display_train_type",
+          "display_fare",
+          "display_transaction_type",
+          "display_pay_mode",
+          "display_operator_name",
+          "terminal_no",
+          "window_no",
+          "shift_no",
+        ];
+
+        elements.forEach((id) => {
+          const tag = document.getElementById(id);
+          if (tag) {
+            tag.textContent = "";
+          }
+        });
+
+        const qrEl = document.getElementById("display_qr_code");
+        if (qrEl) {
+          qrEl.src = "";
+          qrEl.style.display = "none"; // Hide instead of showing empty
+        }
+      });
+
+
+    </script>
+  </body>
+</html>

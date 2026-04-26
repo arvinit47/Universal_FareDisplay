@@ -1,0 +1,14 @@
+{
+  "port": "/dev/ttyUSB0",
+  "baudRate": "9600",
+  "operator": "TEST",
+  "counter": "11",
+  "station": "DUMMY",
+  "zone": "NORTHER RAILWAY",
+  "message": "भारतीय रेलवे आपका स्वागत करता है INDIAN RAILWAYS WELCOMES YOU",
+  "openDevTools": false,
+  "alwaysOnTop": false,
+  "fullscreen": true,
+  "kiosk": false,
+  "frame": true
+}

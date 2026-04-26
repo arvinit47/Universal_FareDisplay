@@ -1,0 +1,44 @@
+{
+  "name": "serial-port-4",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron --disable-gpu --no-sandbox --disable-software-rasterizer .",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "productName": "TicketBooking",
+    "appId": "com.example.ticketbooking",
+    "files": [
+      "**/*",
+      "!dist/"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "assets/icon.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@serialport/parser-readline": "^13.0.0",
+    "serialport": "^13.0.0"
+  },
+  "devDependencies": {
+    "electron": "^35.7.5",
+    "electron-builder": "^26.0.12"
+  }
+}

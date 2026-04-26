@@ -1,0 +1,81 @@
+<html>
+  <body>
+    <h2>Settings</h2>
+    <form id="settings-form">
+      <label for="port">Port Number:</label>
+      <input type="text" id="port" name="port" required /><br /><br />
+
+      <label for="baudRate">Baud Rate:</label>
+      <input type="number" id="baudRate" name="baudRate" required /><br /><br />
+
+      <label for="operator">Operator Name:</label>
+      <input type="text" id="operator" name="operator"/><br /><br />
+
+      <label for="counter">Windows Counter Number:</label>
+      <input type="number" id="counter" name="counter" /><br /><br />
+
+      <label for="station">Station Name:</label>
+      <input type="text" id="station" name="station"  /><br /><br />
+
+      <label for="zone">Railway Zone Name:</label>
+      <input type="text" id="zone" name="zone"  /><br /><br />
+
+       <label for="messageInput">Message:</label>
+       <input type="text" id="messageInput" name="message" /><br /><br />
+
+      <button type="submit">Save Settings</button>
+    </form>
+
+    <script>
+      window.electronAPI.onSettingsData((event, data) => {
+        const elementIds = [
+          "port",
+          "baudRate",
+          "operator",
+          "counter",
+          "station",
+          "zone"
+        ];
+
+        elementIds.forEach((el) => {
+          document.getElementById(el).value = data[el];
+        });
+          // handle message separately (id != key)
+    document.getElementById("messageInput").value = data.message || "";
+  
+      });
+
+      document
+        .getElementById("settings-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const formData = {
+            port: document.getElementById("port").value,
+            baudRate: document.getElementById("baudRate").value,
+            operator: document.getElementById("operator").value,
+            counter: document.getElementById("counter").value,
+            station: document.getElementById("station").value,
+            zone: document.getElementById("zone").value,
+            message: document.getElementById("messageInput").value,
+  
+          };
+
+          saveSettings(formData);
+        });
+
+      async function saveSettings(formData) {
+        try {
+          const response = await window.electronAPI.saveSettings(formData);
+          if (response.result === 1) {
+            window.electronAPI.changeScreen("index");
+          } else {
+            alert("Error saving details. Please contact Team");
+          }
+        } catch (error) {
+          console.error("Failed to save settings:", error);
+        }
+      }
+    </script>
+  </body>
+</html>
