@@ -568,7 +568,7 @@ function createJson(data, code) {
   if (code.toString() === "22") {
     const fullData = extractLengthAndData(data, 3);
     if (fullData) {
-      const [QRCode] = fullData.split(":");
+      const [QRCode] = fullData.split("^");
       return (JSON = { QRCode });
     }
   }
