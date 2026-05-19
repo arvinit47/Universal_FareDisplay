@@ -1,668 +1,490 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Indian Railways</title>
-    <style>
-      :root {
-        --black: #0d0d0d;
-        --white: #ffffff;
-        --accent: #e60000;
-        --yellow: #ffd400;
-        --muted: #333;
-        --cell-height: calc(100vh / 8);
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Railways</title>
+  <style>
+    :root {
+      --maroon: #5e0000;
+      --bg-grey: #c0c0c0;
+      --black: #000000;
+      --white: #ffffff;
+    }
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      html,
-      body {
-        height: 100%;
-        width: 100%;
-        font-family: Arial, sans-serif;
-        background-color: #f8f8f8;
-      }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-grey);
+      overflow: hidden;
+    }
 
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 0px 0px;
+    }
 
-      .form-container {
-        width: 100%;
-        height: 100vh;
-        border: 2px solid #000;
-        background-color: #fff;
-        display: flex;
-        flex-direction: column;
-      }
+    /* --- Header Section --- */
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 5px;
+      background-color: var(--white);
+      width: 100%;
+      padding: 0px 20px;
+    }
 
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 20px;
-        background-color: #f5f5f5;
-        border-bottom: 1px solid #ccc;
-        color: rgb(0, 0, 0);
-      }
+    .top-meta {
+      display: flex;
+      gap: 25px;
+      font-size: 1rem;
+      color: var(--maroon);
+      font-weight: bold;
+      margin-top: 10px;
+    }
 
-      .header-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: var(--accent);
-        
-      }
+    .meta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2%;
+    }
 
-      .header-left img {
-        /*height: 50px;*/
-        height: 80px;
-      }
+    .meta-value {
+      color: var(--black);
+      border-top: 2px dashed #666;
+      min-width: 80px;
+      text-align: center;
+      margin-top: 5px;
+      height: 1.2rem;
+      font-family: monospace;
+      font-size: 1.5rem;
+    }
 
-      .header-left h1 {
-        /*font-size: 2.5rem;*/
-        font-size: 2.5rem;
-        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-        text-transform: uppercase;
-        margin: 0;
-      }
+    .logo-container {
+      background-color: var(--white);
+      padding: 5px;
+      border-radius: 4px;
+    }
 
-      .header-right .zone-station {
-        /*font-size: 1.3rem;*/
-        font-size: 1.5rem;
-        font-weight: 800;
-        text-align: right;
-        font-family: 'Montserrat', sans-serif;
-         color: #333333;   /* Charcoal */
-         letter-spacing: 0px
-      }
+    .logo-container img {
+      height: 150px;
+    }
 
-      .fare-header {
-        background-color: #000;
-        color: #fff;
-        text-align: center;
-        padding: 10px;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        
-        
-      }
+    .main-title {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 5.5rem;
+      font-weight: 900;
+      color: var(--maroon);
+      margin-top: -15px;
+      margin-bottom: 15px;
+      letter-spacing: -1px;
+    }
 
-      .content {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-      }
+    /* --- Data Grid Section --- */
+    .grid-wrapper {
+      display: grid;
+      grid-template-columns: repeat(24, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 6px;
+      flex-grow: 1;
+      margin-bottom: 10px;
+    }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 1.4rem;
-        font-weight: 400;
-        table-layout: fixed;
-        height: -webkit-fill-available;
-      }
+    .box {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 1.4rem;
+      padding: 5px;
+    }
 
-      th {
-        background-color: #f4f4f4;
-        font-weight: 900;
-        width: 20%;
-        text-align: center;
-        border: 1px solid #141414;
-        
-        
-      }
+    .lbl {
+      background-color: var(--white);
+      color: var(--maroon);
+    }
 
-      td {
-        border: 2px solid #c7baba;
-        padding: 20px;
-        text-align: center;
-        background-color: #111;
-        color: #fff;
-        width: 25%;
-      }
-        
+    .lbl .eng {
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
 
-      tr {
-        /*height: var(--cell-height);*/
-        --cell-height: 80px;
-      }
-      
-      
+    .lbl .hin {
+      font-size: 2rem;
+      font-weight: bold;
+    }
 
-      .highlight {
-        font-size: 2.5rem;
-        font-weight:bolder;
-        color: red;
-        text-align: center;
-      }
+    .val {
+      background-color: var(--black);
+      color: var(--white);
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 1.5rem;
+    }
 
-      .footer {
-        background-color: #000;
-        color: #fff;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-      }
+    .val.fare-box {
+      background-color: var(--maroon);
+      font-size: 5.0rem;
+      letter-spacing: 2px;
+    }
 
-      .scan {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 10px;
-        min-height: 120px;
-      }
+    /* Column Span Helpers */
+    .col-2 { grid-column: span 2; }
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-8 { grid-column: span 8; }
+    .col-14 { grid-column: span 14; }
 
-      .qr-code {
-        border: 1px solid #ddd;
-        background-color: white;
-        width: 250px;
-        height: 250px;
-      }
-     
+    /* Split Box Logic (Adult/Child) */
+    .split-box {
+      padding: 0;
+      justify-content: space-between;
+    }
 
-      @media (max-width: 768px) {
-        .qr-code {
-          width: 150px;
-          height: 150px;
-        }
-      }
+    .split-row {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      font-weight: 900;
+    }
 
-      @media (max-width: 480px) {
-        .qr-code {
-          width: 100px;
-          height: 100px;
-        }
-      }
+    .split-divider {
+      width: 90%;
+      height: 3px;
+      background-color: var(--maroon);
+    }
 
-      td:empty::before {
-        content: "-";
-        color: #999;
-      }
+    .val.split-box .split-divider {
+      background-color: var(--white);
+    }
 
-      .meta-right {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        align-items: center;
-        /*gap: 28px;*/
-        font-weight: 550;
-        font-size: 25px;
-        width: 100%;
-      }
-   
+    /* Specific Placements */
+    .qr-container {
+      grid-column: 19 / span 6;
+      grid-row: 3 / span 2;
+      background-color: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-      .meta-right .label {
-        color: var(--yellow);
-        margin-right: 6px;
-      }
+    .qr-code {
+      width: 180px;
+      height: 180px;
+    }
 
-      .meta-right .value {
-        color: var(--accent);
-        font-weight: 900;
-      }
+    .zone-container {
+      grid-column: 19 / span 6;
+      background-color: var(--white);
+      color: var(--maroon);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
 
-      /* ✅ Responsive adjustments */
-      @media (max-width: 1024px) {
-        :root {
-          --cell-height: calc(100vh / 10); /* Smaller cell height on tablets */
-        }
+    #display_zone { font-size: 1.3rem; }
+    #station { font-size: 1.6rem; font-weight: 900; }
 
-        .header-left h1 {
-          font-size: 2rem;
-        }
+    /* --- Marquee Section --- */
+    .fare-input-marquee {
+      background-color: var(--black);
+      color: red;
+      height: 50px;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
 
-      
-      }
+    .marquee-content {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      animation: marquee 15s linear infinite;
+      font-size: 2rem;
+      font-weight: bold;
+    }
 
-      @media (max-width: 768px) {
-        :root {
-          --cell-height: calc(80vh / 12); /* Smaller cell height on mobile */
-        }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
 
-        .header h1 {
-          font-size: 1.4rem;
-        }
+    /* Responsive adjustments if window size shrinks */
+    @media (max-width: 1024px) {
+      .main-title { font-size: 4rem; }
+      .lbl .eng { font-size: 1.2rem; }
+      .lbl .hin { font-size: 1rem; }
+      .val { font-size: 1.2rem; }
+      .qr-code { width: 120px; height: 120px; }
+    }
+  </style>
+</head>
 
-        .fare-header {
-          flex-direction: column;
-          text-align: center;
-        }
-
-        table {
-          font-size: 1rem;
-        }
-
-        .footer {
-          flex-direction: column;
-          text-align: center;
-          gap: 10px;
-        }
-
-      
-
-        .meta-right {
-          flex-direction: column;
-          font-size: 18px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        :root {
-          --cell-height: calc(
-            100vh / 14
-          ); /* Even smaller cells for small screens */
-        }
-
-        .header h1 {
-          font-size: 1.1rem;
-        }
-
-        table {
-          font-size: 0.85rem;
-        }
-
-        .qr-code {
-          width: 100px;
-          height: 100px;
-        }
-
-        th,
-        td {
-          padding: 6px;
-        }
-      }
-
-      .fare-input-marquee {
-  background-color: #000;
-  color:red;
-  height: 60px;                /* match fare-header */
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.marquee-content {
-  display: inline-block;
-  white-space: nowrap;         /* prevent wrapping */
-  padding-left: 100%;          /* start from right */
-  animation: marquee 15s linear infinite; /* continuous animation */
-  font-size: 2rem;
-  font-weight: 500;
-}
-
-/* Keyframes for seamless loop */
-@keyframes marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .fare-input-marquee { height: 50px; }
-  .marquee-content { font-size: 2rem; }
-}
-
-
-    </style>
-  </head>
-
-  <body>
-    <div class="form-container">
-      <div class="content">
-        <div class="header">
-          <div class="header-left">
-            <img
-              src="./images/indian-railways-logo.png"
-              alt="Indian Railways Logo"
-            />
-            <h1>TICKET INFORMATION</h1>
+<body>
+  <div class="app-container">
+    
+    <div class="header-section">
+      <div>
+        <div class="top-meta">
+          <div class="meta-group">
+            <span style="font-size: 1.2rem;">Terminal ID</span>
+            <div class="meta-value" id="terminal_no"></div>
           </div>
-
-          <div class="header-right">
-            <div class="zone-station">
-              <span id="display_zone"></span>
-              <br />
-              <span id="station"></span>
-            </div>
+          <div class="meta-group">
+            <span style="font-size: 1.2rem;">Windows No.</span>
+            <div class="meta-value" id="window_no"></div>
+          </div>
+          <div class="meta-group">
+            <span style="font-size: 1.2rem;">Shift No.</span>
+            <div class="meta-value" id="shift_no"></div>
           </div>
         </div>
-
-        <div class="fare-header">
-          <div class="meta-right">
-            <div>
-              <span class="label">TERMINAL NO:</span>
-              <span class="value" id="terminal_no"></span>
-            </div>
-            <div>
-              <span class="label">WINDOW NO:</span>
-              <span class="value" id="window_no"></span>
-            </div>
-            <div>
-              <span class="label">SHIFT NO:</span>
-              <span class="value" id="shift_no"></span>
-            </div>
-          </div>
-        </div>
-
-        <table>
-          <tr>
-            <th>From <br />"कहाँ से"</th>
-            <td id="source_station"></td>
-            <th>To <br />"कहाँ तक"</th>
-            <td id="destination_station"></td>
-          </tr>
-          <tr>
-            <th>Date <br />"दिनांक"</th>
-            <td id="display_date"></td>
-            <th>Fare <br />"किराया"</th>
-            <td class="highlight" id="display_fare"></td>
-          </tr>
-          <tr>
-            <th>Type of Train <br />"ट्रेन के प्रकार"</th>
-            <td id="display_train_type"></td>
-
-            <!-- <th>Child(बच्चे)</th>
-            <td id="display_child"></td> -->
-            <th style="padding: 0%;">
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  grid-template-rows: 1fr 1fr;
-                  gap: 2px;
-                  width: 100%;
-                  height: 100px;
-                "
-              >
-                <div
-                  style="
-                    border: 1px solid;
-                    padding-top: 10%;
-                    text-align: center;
-                  "
-                >
-                  Adult
-                </div>
-                <div
-                  style="
-                    border: 1px solid;
-                    padding-top: 10%;
-                    text-align: center;
-                  "
-                >
-                  Children
-                </div>
-                <div
-                  style="
-                    border: 1px solid;
-                    text-align: center;
-                    padding-top: 10%;
-                    color: #fff;
-                    background-color: #000;
-                  "
-                  id="display_adult"
-                ></div>
-                <div
-                  style="
-                    border: 1px solid;
-                    text-align: center;
-                    padding-top: 10%;
-                    color: #fff;
-                    background-color: #000;
-                  "
-                  id="display_child"
-                ></div>
-              </div>
-            </th>
-            <td rowspan="4">
-              <div class="scan">
-                <img
-                  class="qr-code"
-                  id="display_qr_code"
-                  src=""
-                  alt="QR Code"
-                />
-                <p>Scan this QR to pay</p>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th>Transaction Type</th>
-            <td id="display_transaction_type"></td>
-            <!-- <th>Class</th> -->
-              <th style="padding: 0px">
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: 1fr;
-                  grid-template-rows: 1fr 1fr;
-                  gap: 1px;
-                  width: 100%;
-                  height: 100px;
-                "
-              >
-                <div
-                 style="
-                 border: 1px solid;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                   font-weight: bold;
-                  "
-                >
-                  Class
-                </div>
-                <div
-                     style="
-                      border: 1px solid;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      color: #fff;
-                      text-align: center;
-                      background-color: #000;
-                       "
-                  id="display_class"
-                ></div>
-              </div>
-              </th>
-          </tr>
-          <tr>
-             <th>Pay Mode</th>
-            <td colspan="2" id="display_pay_mode"></td>
-            <!-- <th>Operator Name</th>
-            <td colspan="2" id="display_operator_name"></td> -->
-
-            <!-- <td id="display_class"></td> -->
-          </tr>
-          <tr>
-             <th>Operator Name</th>
-            <td colspan="2" id="display_operator_name"></td>
-            <!-- <th>Pay Mode</th>
-            <td colspan="2" id="display_pay_mode"></td> -->
-
-            <!-- <th>Shift No:(शिफ्ट नंबर)</th> -->
-            <!-- <td id="shift_no"></td> -->
-          </tr>
-        </table>
-        <div class="fare-input-marquee" id="message">
-  <div class="marquee-content" >
-  </div>
-</div>
-
-
-
-        
+        <div class="main-title">Ticket Information</div>
       </div>
-      <!-- <div id="data"></div> -->
+      
+      <div class="logo-container">
+        <img src="./images/indian-railways-logo.png" alt="Indian Railways Logo" />
+      </div>
     </div>
 
-    <script src="../vendor/qrcode.min.js"></script>
-    <script>
-      function setText(id, value) {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.innerText = value == null ? "" : String(value);
+    <div class="grid-wrapper">
+      
+      <div class="box lbl col-4">
+        <span class="eng">From</span>
+        <span class="hin">कहाँ से</span>
+      </div>
+      <div class="box val col-8" id="source_station"></div>
+      
+      <div class="box lbl col-4">
+        <span class="eng">To</span>
+        <span class="hin">कहाँ तक</span>
+      </div>
+      <div class="box val col-8" id="destination_station"></div>
+
+      <div class="box lbl col-4">
+        <span class="eng">Date</span>
+        <span class="hin">दिनांक</span>
+      </div>
+      <div class="box val col-4" id="display_date"></div>
+      
+      <div class="box lbl split-box col-2">
+        <div class="split-row eng">Adult</div>
+        <div class="split-divider"></div>
+        <div class="split-row eng">Child</div>
+      </div>
+      <div class="box val split-box col-2">
+        <div class="split-row" id="display_adult"></div>
+        <div class="split-divider"></div>
+        <div class="split-row" id="display_child"></div>
+      </div>
+
+      <div class="box lbl split-box col-2">
+        <div class="split-row eng">Class</div>
+        <!-- <div class="split-divider"></div>
+        <div class="split-row hin">--</div> -->
+      </div>
+      <div class="box val col-2" id="display_class"></div>
+
+      <div class="box lbl col-3">
+        <span class="eng">Fare</span>
+        <span class="hin">किराया</span>
+      </div>
+      <div class="box val fare-box col-5" id="display_fare"></div>
+
+      <div class="box lbl col-4">
+        <span class="eng">Type of Train</span>
+        <span class="hin">ट्रेन का प्रकार</span>
+      </div>
+      <div class="box val col-6" id="display_train_type"></div>
+      
+      <div class="box lbl col-3">
+        <span class="eng">Pay Mode</span>
+      </div>
+      <div class="box val col-5" id="display_pay_mode"></div>
+
+      <div class="qr-container">
+        <img class="qr-code" id="display_qr_code" src="" alt="QR Code" style="display:none;" />
+      </div>
+
+      <div class="box lbl col-4">
+        <span class="eng">Transaction Type</span>
+      </div>
+      <div class="box val col-6" id="display_transaction_type"></div>
+      <div class="box val col-8"></div>
+
+      <div class="box lbl col-4">
+        <span class="eng">Operator<br>Name</span>
+      </div>
+      <div class="box val col-14" id="display_operator_name"></div>
+      
+      <div class="zone-container">
+        <span id="display_zone"></span>
+        <span id="station"></span>
+      </div>
+
+    </div>
+
+    <div class="fare-input-marquee" id="message">
+      <div class="marquee-content"></div>
+    </div>
+
+  </div>
+
+  <script src="../vendor/qrcode.min.js"></script>
+  <script>
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerText = value == null ? "" : String(value);
+    }
+
+    window.electronAPI.onSettingsData((event, settings) => {
+      setText("display_zone", settings.zone || "INDIAN RAILWAY");
+      setText("display_operator_name", settings.operator || "");
+      setText("station", settings.station || "");
+      setText("window_no", settings.windowNo || settings.counter || "");
+      
+      const marqueeDiv = document.querySelector('#message .marquee-content');
+      marqueeDiv.textContent = settings.message || "";
+    });
+
+    window.electronAPI.onSerialData((event, data) => {
+      if (data.source_station) {
+        const sourceEl = document.getElementById("source_station");
+        sourceEl.textContent = `${data.source_station.eng_name} (${data.source_station.station_code})`;
       }
-      window.electronAPI.onSettingsData((event, settings) => {
-        setText("display_zone", settings.zone || "INDIAN RAILWAY");
-        setText("display_operator_name", settings.operator || "");
-        setText("station", settings.station || "");
-        setText("window_no", settings.windowNo || settings.counter || "");
-        // ✅ Add this for marquee
-  const marqueeDiv = document.querySelector('#message .marquee-content');
-  marqueeDiv.textContent = settings.message || "";
-      });
-      window.electronAPI.onSerialData((event, data) => {
-        //console.log("data in index 3", data);
-        // const dataDiv = document.getElementById("data");
-        // dataDiv.textContent = JSON.stringify(data, null, 2);
-        // source_station,
-        if (data.source_station) {
-          const sourceEl = document.getElementById("source_station");
-          sourceEl.textContent = `${data.source_station.eng_name} (${data.source_station.station_code})`;
-        }
 
-        // destination_station
-        if (data.destination_station) {
-          const sourceEl = document.getElementById("destination_station");
-          sourceEl.textContent = `${data.destination_station.eng_name} (${data.destination_station.station_code})`;
-        }
+      if (data.destination_station) {
+        const destEl = document.getElementById("destination_station");
+        destEl.textContent = `${data.destination_station.eng_name} (${data.destination_station.station_code})`;
+      }
 
-        // date and month
-        if (data.date && data.month) {
-          const displayDateEl = document.getElementById("display_date");
-          displayDateEl.textContent = `${data.date.dateData}/${data.month.monthData}`;
-        }
+      if (data.date && data.month) {
+        const displayDateEl = document.getElementById("display_date");
+        displayDateEl.textContent = `${data.date.dateData}/${data.month.monthData}/${data.year ? data.year.yearData : ''}`;
+      }
 
-        // display_adult
-        if (data.adult) {
-          const adultEl = document.getElementById("display_adult");
-          adultEl.textContent = `${data.adult.adultData}`;
-        }
+      if (data.adult) {
+        const adultEl = document.getElementById("display_adult");
+        adultEl.textContent = `${data.adult.adultData}`;
+      }
 
-        // display_child
-        if (data.child) {
-          const childEl = document.getElementById("display_child");
-          childEl.textContent = `${data.child.childData}`;
-        }
+      if (data.child) {
+        const childEl = document.getElementById("display_child");
+        childEl.textContent = `${data.child.childData}`;
+      }
 
-        // display_class
-        if (data.class) {
-          const classEl = document.getElementById("display_class");
-          classEl.textContent = `${data.class.Class}`;
-        }
-        // display_train_type
-        if (data.type_of_trian) {
-          const el = document.getElementById("display_train_type");
-          el.textContent = `${data.type_of_trian.value} (${data.type_of_trian.description})`;
-        }
+      if (data.class) {
+        const classEl = document.getElementById("display_class");
+        classEl.textContent = `${data.class.Class}`;
+      }
 
-        // display_fare
-        if (data.fare) {
-          const el = document.getElementById("display_fare");
-          el.textContent = `${data.fare.fareData}`;
-        }
+      if (data.type_of_trian) {
+        const el = document.getElementById("display_train_type");
+        el.textContent = `${data.type_of_trian.value} (${data.type_of_trian.description})`;
+      }
 
-        // display_transaction_type
-        if (data.transaction_type) {
-          const el = document.getElementById("display_transaction_type");
-          el.textContent = `${data.transaction_type.transactionType}`;
-        }
+      if (data.fare) {
+        const el = document.getElementById("display_fare");
+        el.textContent = `${data.fare.fareData}`;
+      }
 
-        // display_pay_mode
-        if (data.payment_gateway) {
-          const el = document.getElementById("display_pay_mode");
-          el.textContent = `${data.payment_gateway.paymentGateway}`;
-        }
+      if (data.transaction_type) {
+        const el = document.getElementById("display_transaction_type");
+        el.textContent = `${data.transaction_type.transactionType}`;
+      }
 
-        // display_operator_name
-        if (data.operator_details) {
-          const el = document.getElementById("display_operator_name");
-          el.textContent = `${data.operator_details.Operator}`;
-        }
-        //display terminal_no
-        if (data.operator_details) {
-          const el = document.getElementById("terminal_no");
-          el.textContent = `${data.operator_details.Terminal}`;
-        }
+      if (data.payment_gateway) {
+        const el = document.getElementById("display_pay_mode");
+        el.textContent = `${data.payment_gateway.paymentGateway}`;
+      }
 
-        // display window_no
-        if (data.operator_details) {
-          const el = document.getElementById("window_no");
-          el.textContent = `${data.operator_details.WindowNo}`;
-        }
-        // display shift_no
-        if (data.operator_details) {
-          const el = document.getElementById("shift_no");
-          el.textContent = `${data.operator_details.ShiftNo}`;
-        }
+      if (data.operator_details) {
+        const el = document.getElementById("display_operator_name");
+        el.textContent = `${data.operator_details.Operator}`;
+      }
+      
+      if (data.operator_details) {
+        const el = document.getElementById("terminal_no");
+        el.textContent = `${data.operator_details.Terminal}`;
+      }
 
-        // display_qr_code
-        if (data.qr_code && data.qr_code.QRCode) {
-          const el = document.getElementById("display_qr_code");
+      if (data.operator_details) {
+        const el = document.getElementById("window_no");
+        el.textContent = `${data.operator_details.WindowNo}`;
+      }
 
-          // toDataURL returns a PNG data URL
-          QRCode.toDataURL(data.qr_code.QRCode, { margin: 1, width: 150 })
-            .then((url) => {
-              el.src = url;
-              el.style.display = "block";
-            })
-            .catch((err) => {
-              console.error("QR generation failed:", err);
-            });
-        }
+      if (data.operator_details) {
+        const el = document.getElementById("shift_no");
+        el.textContent = `${data.operator_details.ShiftNo}`;
+      }
 
+      if (data.qr_code && data.qr_code.QRCode) {
+        const el = document.getElementById("display_qr_code");
+        QRCode.toDataURL(data.qr_code.QRCode, { margin: 1, width: 180 })
+          .then((url) => {
+            el.src = url;
+            el.style.display = "block";
+          })
+          .catch((err) => {
+            console.error("QR generation failed:", err);
+          });
+      }
+    });
 
-      });
+    window.electronAPI.onClearScreen((event, data) => {
+      const elements = [
+        "source_station",
+        "destination_station",
+        "display_date",
+        "display_adult",
+        "display_child",
+        "display_class",
+        "display_train_type",
+        "display_fare",
+        "display_transaction_type",
+        "display_pay_mode",
+        "display_operator_name",
+        "terminal_no",
+        "window_no",
+        "shift_no",
+      ];
 
-      window.electronAPI.onClearScreen((event, data) => {
-        const elements = [
-          "source_station",
-          "destination_station",
-          "display_date",
-          "display_adult",
-          "display_child",
-          "display_class",
-          "display_train_type",
-          "display_fare",
-          "display_transaction_type",
-          "display_pay_mode",
-          "display_operator_name",
-          "terminal_no",
-          "window_no",
-          "shift_no",
-        ];
-
-        elements.forEach((id) => {
-          const tag = document.getElementById(id);
-          if (tag) {
-            tag.textContent = "";
-          }
-        });
-
-        const qrEl = document.getElementById("display_qr_code");
-        if (qrEl) {
-          qrEl.src = "";
-          qrEl.style.display = "none"; // Hide instead of showing empty
+      elements.forEach((id) => {
+        const tag = document.getElementById(id);
+        if (tag) {
+          tag.textContent = "";
         }
       });
 
-
-    </script>
-  </body>
+      const qrEl = document.getElementById("display_qr_code");
+      if (qrEl) {
+        qrEl.src = "";
+        qrEl.style.display = "none";
+      }
+    });
+  </script>
+</body>
 </html>
