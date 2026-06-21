@@ -8,7 +8,7 @@ const {
 const path = require("path");
 const { SerialPort } = require("serialport");
 const { ReadlineParser } = require("@serialport/parser-readline");
-const { processData } = require("./utils_new");
+const { processData } = require("./utils");
 require("./controllers/electron");
 const Settings = require("./models/settings");
 const { testData1, testData, testData2, testData3 } = require("./test");
@@ -38,10 +38,10 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile(path.join(__dirname, "views", "index3.html"));
+  mainWindow.loadFile(path.join(__dirname, "views", "index.html"));
   //fOR ADMIN SETTING
   // after mainWindow.loadFile(...)
-  mainWindow.loadFile(path.join(__dirname, "views", "index3.html"));
+  mainWindow.loadFile(path.join(__dirname, "views", "index.html"));
 
   // send settings to renderer once the page finishes loading
   mainWindow.webContents.on("did-finish-load", () => {

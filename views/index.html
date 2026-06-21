@@ -1,114 +1,494 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Secure Serial Monitor</title>
-    <style>
-      /* Your existing styles */
-    </style>
-  </head>
-  <body>
-    <div id="container">
-      <h1>Secure Serial Monitor</h1>
-      <div id="status">Status: Connected</div>
-      <div id="dataDisplay"></div>
-      <div id="error" class="error"></div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Railways</title>
+  <style>
+    :root {
+      --maroon: #5e0000;
+      --bg-grey: #c0c0c0;
+      --black: #000000;
+      --white: #ffffff;
+      --red: #b30000;
+      --yellow: #ffcc00;
+      --blue  : #003366;
+      --cyan: #0099cc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-grey);
+      overflow: hidden;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 0px 0px;
+    }
+
+    /* --- Header Section --- */
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 5px;
+      background-color: var(--white);
+      width: 100%;
+      padding: 0px 20px;
+    }
+
+    .top-meta {
+      display: flex;
+      gap: 25px;
+      font-size: 1rem;
+      color: var(--maroon);
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .meta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2%;
+    }
+
+    .meta-value {
+      color: var(--cyan);
+      border-top: 2px dashed #666;
+      min-width: 80px;
+      text-align: center;
+      margin-top: 5px;
+      height: 1.2rem;
+      font-family: monospace;
+      font-size: 1.5rem;
+    }
+
+    .logo-container {
+      background-color: var(--white);
+      padding: 5px;
+      border-radius: 4px;
+    }
+
+    .logo-container img {
+      height: 150px;
+    }
+
+    .main-title {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 4.0rem;
+      font-weight: 900;
+      color: var(--maroon);
+      margin-top: 5px;
+      margin-bottom: 15px;
+      letter-spacing: -1px;
+    }
+
+    /* --- Data Grid Section --- */
+    .grid-wrapper {
+      display: grid;
+      grid-template-columns: repeat(24, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 6px;
+      flex-grow: 1;
+      margin-bottom: 10px;
+    }
+
+    .box {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 1.4rem;
+      padding: 5px;
+    }
+
+    .lbl {
+      background-color: var(--white);
+      color: var(--maroon);
+    }
+
+    .lbl .eng {
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .lbl .hin {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .val {
+      background-color: var(--black);
+      color: var(--white);
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 1.5rem;
+    }
+
+    .val.fare-box {
+      background-color: var(--maroon);
+      font-size: 3.5rem;
+      letter-spacing: 2px;
+    }
+
+    /* Column Span Helpers */
+    .col-2 { grid-column: span 2; }
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-8 { grid-column: span 8; }
+    .col-14 { grid-column: span 14; }
+
+    /* Split Box Logic (Adult/Child) */
+    .split-box {
+      padding: 0;
+      justify-content: space-between;
+    }
+
+    .split-row {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      font-weight: 900;
+    }
+
+    .split-divider {
+      width: 90%;
+      height: 3px;
+      background-color: var(--maroon);
+    }
+
+    .val.split-box .split-divider {
+      background-color: var(--white);
+    }
+
+    /* Specific Placements */
+    .qr-container {
+      grid-column: 19 / span 6;
+      grid-row: 3 / span 2;
+      background-color: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-code {
+      width: 350px;
+      height: 350px;
+    }
+
+    .zone-container {
+      grid-column: 19 / span 6;
+      background-color: var(--white);
+      color: var(--maroon);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    #display_zone { font-size: 1.3rem; }
+    #station { font-size: 1.6rem; font-weight: 900; }
+
+    /* --- Marquee Section --- */
+    .fare-input-marquee {
+      background-color: var(--black);
+      color: red;
+      height: 50px;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .marquee-content {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      animation: marquee 15s linear infinite;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* Responsive adjustments if window size shrinks */
+    @media (max-width: 1024px) {
+      .main-title { font-size: 4rem; }
+      .lbl .eng { font-size: 1.2rem; }
+      .lbl .hin { font-size: 1rem; }
+      .val { font-size: 1.2rem; }
+      .qr-code { width: 120px; height: 120px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+    
+    <div class="header-section">
+      <div>
+        <div class="top-meta">
+          <div class="meta-group">
+            <span style="font-size: 1.2rem;">Terminal ID</span>
+            <div class="meta-value" id="terminal_no"></div>
+          </div>
+          <div class="meta-group">
+            <span style="font-size: 1.2rem;">Windows No.</span>
+            <div class="meta-value" id="window_no"></div>
+          </div>
+          <div class="meta-group">
+            <span style="font-size: 1.2rem;">Shift No.</span>
+            <div class="meta-value" id="shift_no"></div>
+          </div>
+        </div>
+        <div class="main-title">Ticket Information</div>
+      </div>
+      
+      <div class="logo-container">
+        <img src="./images/indian-railways-logo.png" alt="Indian Railways Logo" />
+      </div>
     </div>
 
-    <script>
-      const dataDisplay = document.getElementById("dataDisplay");
-      const errorDiv = document.getElementById("error");
+    <div class="grid-wrapper">
+      
+      <div class="box lbl col-4">
+        <span class="eng">From</span>
+        <span class="hin">कहाँ से</span>
+      </div>
+      <div class="box val col-8" id="source_station"></div>
+      
+      <div class="box lbl col-4">
+        <span class="eng">To</span>
+        <span class="hin">कहाँ तक</span>
+      </div>
+      <div class="box val col-8" id="destination_station"></div>
 
-      window.electronAPI.onSerialData((event, data) => {
-        // const p = document.createElement("p");
-        // p.textContent = data;
-        // dataDisplay.appendChild(p);
+      <div class="box lbl col-4">
+        <span class="eng">Date</span>
+        <span class="hin">दिनांक</span>
+      </div>
+      <div class="box val col-4" id="display_date"></div>
+      
+      <div class="box lbl split-box col-2">
+        <div class="split-row eng">Adult</div>
+        <div class="split-divider"></div>
+        <div class="split-row eng">Child</div>
+      </div>
+      <div class="box val split-box col-2">
+        <div class="split-row" id="display_adult"></div>
+        <div class="split-divider"></div>
+        <div class="split-row" id="display_child"></div>
+      </div>
 
-        console.log(data);
-        dataDisplay.innerHTML = `
-    <h2>Train Ticket Details</h2>
+      <div class="box lbl split-box col-2">
+        <div class="split-row eng">Class</div>
+        <!-- <div class="split-divider"></div>
+        <div class="split-row hin">--</div> -->
+      </div>
+      <div class="box val col-2" id="display_class"></div>
 
-    ${
-      data.source_station
-        ? `<p><strong>Source Station:</strong> ${data.source_station.eng_name} (${data.source_station.station_code})</p>`
-        : ""
+      <div class="box lbl col-3">
+        <span class="eng">Fare</span>
+        <span class="hin">किराया</span>
+      </div>
+      <div class="box val fare-box col-5" id="display_fare"></div>
+
+      <div class="box lbl col-4">
+        <span class="eng">Type of Train</span>
+        <span class="hin">ट्रेन का प्रकार</span>
+      </div>
+      <div class="box val col-6" id="display_train_type"></div>
+      
+      <div class="box lbl col-3">
+        <span class="eng">Pay Mode</span>
+      </div>
+      <div class="box val col-5" id="display_pay_mode"></div>
+
+      <div class="qr-container">
+        <img class="qr-code" id="display_qr_code" src="" alt="QR Code" style="display:none;" />
+      </div>
+
+      <div class="box lbl col-4">
+        <span class="eng">Transaction Type</span>
+      </div>
+      <div class="box val col-6" id="display_transaction_type"></div>
+      <div class="box val col-8"></div>
+
+      <div class="box lbl col-4">
+        <span class="eng">Operator<br>Name</span>
+      </div>
+      <div class="box val col-14" id="display_operator_name"></div>
+      
+      <div class="zone-container">
+        <span id="display_zone"></span>
+        <span id="station"></span>
+      </div>
+
+    </div>
+
+    <div class="fare-input-marquee" id="message">
+      <div class="marquee-content"></div>
+    </div>
+
+  </div>
+
+  <script src="../vendor/qrcode.min.js"></script>
+  <script>
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerText = value == null ? "" : String(value);
     }
 
-    ${
-      data.destination_station
-        ? `<p><strong>Destination Station:</strong> ${data.destination_station.eng_name} (${data.destination_station.station_code})</p>`
-        : ""
-    }
+    window.electronAPI.onSettingsData((event, settings) => {
+      setText("display_zone", settings.zone || "INDIAN RAILWAY");
+      setText("display_operator_name", settings.operator || "");
+      setText("station", settings.station || "");
+      setText("window_no", settings.windowNo || settings.counter || "");
+      
+      const marqueeDiv = document.querySelector('#message .marquee-content');
+      marqueeDiv.textContent = settings.message || "";
+    });
 
-    ${
-      data.fare
-        ? `<p><strong>Fare:</strong> ${data.fare.fareData}</p>`
-        : ""
-    }
-    
-    ${
-      data.type_of_trian
-        ? `<p><strong>Train Type:</strong> ${data.type_of_trian.description} (${data.type_of_trian.value})</p>`
-        : ""
-    }
-    
-    ${data.class ? `<p><strong>Class:</strong> ${data.class.Class}</p>` : ""}
-    
-    ${
-      data.transaction_type
-        ? `<p><strong>Transaction Type:</strong> ${data.transaction_type.transactionType}</p>`
-        : ""
-    }
-    
-    ${
-      data.operator_details
-        ? `
-        <p><strong>Operator:</strong> ${data.operator_details.Operator}</p>
-        <p><strong>Terminal:</strong> ${data.operator_details.Terminal}</p>
-        <p><strong>Window No:</strong> ${data.operator_details.WindowNo}</p>
-        <p><strong>Shift No:</strong> ${data.operator_details.ShiftNo}</p>
-    `
-        : ""
-    }
-    
-    ${
-      data.cancellation_refund_amount
-        ? `<p><strong>Refund Amount:</strong> ${data.cancellation_refund_amount.amount}</p>`
-        : ""
-    }
-    
-    ${
-      data.payment_gateway
-        ? `<p><strong>Payment Gateway:</strong> <a href="${data.payment_gateway.paymentGateway}" target="_blank">${data.payment_gateway.paymentGateway}</a></p>`
-        : ""
-    }
-    
-    ${
-      data.qr_code
-        ? `
-        <p><strong>QR Code:</strong></p>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
-          data.qr_code.QRCode
-        )}&size=150x150" alt="QR Code">
-    `
-        : ""
-    }
-`;
+    window.electronAPI.onSerialData((event, data) => {
+      if (data.source_station) {
+        const sourceEl = document.getElementById("source_station");
+        sourceEl.textContent = `${data.source_station.eng_name} (${data.source_station.station_code})`;
+      }
+
+      if (data.destination_station) {
+        const destEl = document.getElementById("destination_station");
+        destEl.textContent = `${data.destination_station.eng_name} (${data.destination_station.station_code})`;
+      }
+
+      if (data.date && data.month) {
+        const displayDateEl = document.getElementById("display_date");
+        displayDateEl.textContent = `${data.date.dateData}/${data.month.monthData}`;
+      }
+
+      if (data.adult) {
+        const adultEl = document.getElementById("display_adult");
+        adultEl.textContent = `${data.adult.adultData}`;
+      }
+
+      if (data.child) {
+        const childEl = document.getElementById("display_child");
+        childEl.textContent = `${data.child.childData}`;
+      }
+
+      if (data.class) {
+        const classEl = document.getElementById("display_class");
+        classEl.textContent = `${data.class.Class}`;
+      }
+
+      if (data.type_of_trian) {
+        const el = document.getElementById("display_train_type");
+        el.textContent = `${data.type_of_trian.value} (${data.type_of_trian.description})`;
+      }
+
+      if (data.fare) {
+        const el = document.getElementById("display_fare");
+        el.textContent = `${data.fare.fareData}`;
+      }
+
+      if (data.transaction_type) {
+        const el = document.getElementById("display_transaction_type");
+        el.textContent = `${data.transaction_type.transactionType}`;
+      }
+
+      if (data.payment_gateway) {
+        const el = document.getElementById("display_pay_mode");
+        el.textContent = `${data.payment_gateway.paymentGateway}`;
+      }
+
+      if (data.operator_details) {
+        const el = document.getElementById("display_operator_name");
+        el.textContent = `${data.operator_details.Operator}`;
+      }
+      
+      if (data.operator_details) {
+        const el = document.getElementById("terminal_no");
+        el.textContent = `${data.operator_details.Terminal}`;
+      }
+
+      if (data.operator_details) {
+        const el = document.getElementById("window_no");
+        el.textContent = `${data.operator_details.WindowNo}`;
+      }
+
+      if (data.operator_details) {
+        const el = document.getElementById("shift_no");
+        el.textContent = `${data.operator_details.ShiftNo}`;
+      }
+
+      if (data.qr_code && data.qr_code.QRCode) {
+        const el = document.getElementById("display_qr_code");
+        QRCode.toDataURL(data.qr_code.QRCode, { margin: 1, width: 180 })
+          .then((url) => {
+            el.src = url;
+            el.style.display = "block";
+          })
+          .catch((err) => {
+            console.error("QR generation failed:", err);
+          });
+      }
+    });
+
+    window.electronAPI.onClearScreen((event, data) => {
+      const elements = [
+        "source_station",
+        "destination_station",
+        "display_date",
+        "display_adult",
+        "display_child",
+        "display_class",
+        "display_train_type",
+        "display_fare",
+        "display_transaction_type",
+        "display_pay_mode",
+        "display_operator_name",
+        "terminal_no",
+        "window_no",
+        "shift_no",
+      ];
+
+      elements.forEach((id) => {
+        const tag = document.getElementById(id);
+        if (tag) {
+          tag.textContent = "";
+        }
       });
 
-      window.electronAPI.onClearScreen((event, data) => {
-        console.log("data_94: ", data);
-        dataDisplay.innerHTML = "<p>SCREEN CLEARED</p>";
-      });
-
-      window.electronAPI.onSerialError((event, error) => {
-        errorDiv.textContent = `Error: ${error}`;
-      });
-
-      // Example of getting ports list
-      window.electronAPI.getPorts().then((ports) => {
-        console.log("Available ports:", ports);
-      });
-    </script>
-  </body>
+      const qrEl = document.getElementById("display_qr_code");
+      if (qrEl) {
+        qrEl.src = "";
+        qrEl.style.display = "none";
+      }
+    });
+  </script>
+</body>
 </html>
