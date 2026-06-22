@@ -248,13 +248,13 @@ body {
 }
 
 .lbl .eng {
-  font-size: clamp(.7rem, 1.8vmin, 1.8rem); /* Responsive using vmin */
+  font-size: clamp(.9rem, 2.3vmin, 2.3rem); /* Responsive using vmin */
   font-weight: 900;
   line-height: 1;
 }
 
 .lbl .hin {
-  font-size: clamp(.7rem, 1.8vmin, 1.8rem); /* Responsive using vmin */
+  font-size: clamp(.9rem, 2.3vmin, 2.3rem); /* Responsive using vmin */
   font-weight: 700;
 }
 
@@ -264,14 +264,14 @@ body {
   text-transform: uppercase;
   border: 1px solid #333;
   min-height: 4vh; /* Adjusted from 5vh to allow more height margin on short viewports */
-  font-size: clamp(.8rem, 2.2vmin, 2.2rem); /* Responsive using vmin */
+  font-size: clamp(1.05rem, 2.8vmin, 2.8rem); /* Responsive using vmin */
   font-weight: 700;
 }
 
 .val.fare-box {
   background-color: var(--maroon);
   letter-spacing: .1vw;
-  font-size: clamp(1.2rem, 4.5vmin, 4rem); /* Responsive using vmin */
+  font-size: clamp(1.6rem, 5.5vmin, 5rem); /* Responsive using vmin */
 }
 
 .col-1 { grid-column: span 1; }
@@ -319,11 +319,11 @@ body {
 }
 
 #display_zone {
-  font-size: clamp(.6rem, 1.8vmin, 1.5rem); /* Responsive using vmin */
+  font-size: clamp(.85rem, 2.3vmin, 2rem); /* Responsive using vmin */
 }
 
 #station {
-  font-size: clamp(.8rem, 2.5vmin, 2rem); /* Responsive using vmin */
+  font-size: clamp(1.1rem, 3.2vmin, 2.8rem); /* Responsive using vmin */
   font-weight: 900;
 }
 
@@ -332,7 +332,7 @@ body {
   background-color: var(--black);
   width: 100%;
   color: var(--white);
-  font-size: clamp(.6rem, 1.6vmin, 1.5rem); /* Responsive using vmin */
+  font-size: clamp(.85rem, 2.1vmin, 2rem); /* Responsive using vmin */
 }
 
 .passenger-table th, .passenger-table td {
@@ -579,7 +579,7 @@ button:hover {
 .payment-success-msg {
   color: #2e7d32;
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 1.6rem;
   margin-top: 8px;
   text-align: center;
 }
