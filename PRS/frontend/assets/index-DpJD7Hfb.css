@@ -566,3 +566,20 @@ button {
 button:hover {
   background: #444;
 }
+
+.small-underline {
+  width: 180px;
+  height: 2px;
+  background-color: currentColor;
+  opacity: 0.5;
+  margin: 4px auto;
+  border-radius: 1px;
+}
+
+.payment-success-msg {
+  color: #2e7d32;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-top: 8px;
+  text-align: center;
+}

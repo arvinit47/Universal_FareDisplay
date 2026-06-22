@@ -59,7 +59,7 @@ const PRS_STATUSES = {
   "RAC": "Reservation Against Cancellation",
   "WL": "Waiting List",
   "GNWL": "General Waiting List",
-  "RLWL": "Remote Location Waiting List",
+  "RLWL": "RLWL",
   "PQWL": "Pooled Quota Waiting List",
   "TQWL": "Tatkal Waiting List",
   "RSWL": "Roadside Station Waiting List",
@@ -224,8 +224,27 @@ function processPRS(raw) {
           }
         }
       }
+    } else if (subFunction === "2") {
+      parsed.type = "qr_code";
+      const qIdx = raw.indexOf("Q");
+      if (qIdx !== -1) {
+        let pos = qIdx + 1;
+        while (pos < raw.length && /\d/.test(raw[pos])) {
+          pos++;
+        }
+        parsed.qr_url = raw.slice(pos).trim();
+      }
+    } else if (subFunction === "3") {
+      parsed.type = "payment_status";
+      const qIdx = raw.indexOf("Q");
+      if (qIdx !== -1) {
+        let pos = qIdx + 1;
+        while (pos < raw.length && /\d/.test(raw[pos])) {
+          pos++;
+        }
+        parsed.message = raw.slice(pos).trim();
+      }
     }
-    // ... handling for other sub-functions if they also follow binary format
     return { parsed, errors: errors.length ? errors : null };
   } catch (err) {
     console.error("[DEBUG] processPRS Error:", err);

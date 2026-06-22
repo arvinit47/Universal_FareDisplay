@@ -1,10 +1,10 @@
 {
-  "port": "COM3",
+  "port": "COM1",
   "baudRate": 9600,
-  "zone": "INDIAN RAILWAY",
-  "station": "NEW DELHI",
-  "operator": "ADMIN",
-  "windowNo": "101",
-  "shiftNo": "1",
-  "message": "Welcome to Indian Railways"
+  "zone": "NORTHERN",
+  "station": "STATION NAME",
+  "operator": "OPERATOR",
+  "windowNo": "11",
+  "shiftNo": "22",
+  "message": "MESSAGE"
 }

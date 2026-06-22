@@ -2,12 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-// Start the backend server logic
-try {
-    require('./backend/server.js');
-} catch (err) {
-    console.error('Failed to start backend server:', err);
-}
+// Backend server required on app ready
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -15,9 +10,8 @@ function createWindow() {
         height: 800,
         webPreferences: {
             nodeIntegration: false,
-            contextIsolation: true,
-            // Preload script if needed, but the current frontend uses WebSockets
-            // which works fine in a standard browser environment.
+            contextIsolation: false,
+            preload: path.join(__dirname, 'preload.js')
         },
         autoHideMenuBar: true,
         icon: path.join(__dirname, 'frontend', 'images', 'indian-railways-logo.png')
@@ -29,6 +23,9 @@ function createWindow() {
         win.loadFile(indexPath);
         win.maximize();
         // win.webContents.openDevTools(); // Uncomment to debug
+        win.webContents.on('console-message', (event, level, message, line, sourceId) => {
+            console.log(`[RENDERER CONSOLE] Level: ${level}, Message: ${message}, Line: ${line}, Source: ${sourceId}`);
+        });
     } else {
         console.error('Frontend build not found at:', indexPath);
         // Fallback or error message
@@ -38,6 +35,16 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+    // Start the backend server logic
+    try {
+        require('./backend/server.js');
+    } catch (err) {
+        console.error('Failed to start backend server:', err);
+    }
+
+    const { Menu } = require('electron');
+    Menu.setApplicationMenu(null);
+
     createWindow();
 
     app.on('activate', () => {

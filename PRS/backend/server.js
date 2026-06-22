@@ -1,28 +1,12 @@
-const express = require("express");
-const http = require("http");
-const WebSocket = require("ws");
+const { app: electronApp, ipcMain, BrowserWindow } = require('electron');
 const { SerialPort } = require("serialport");
-const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const { processData, mapPRSFields } = require("./utils");
 require("dotenv").config();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-
-const PORT = process.env.PORT || 5000;
-const isElectron = process.versions.hasOwnProperty('electron');
-const userDataPath = isElectron ? require('electron').app.getPath('userData') : __dirname;
+const userDataPath = electronApp.getPath('userData');
 const CONFIG_PATH = path.join(userDataPath, "config.json");
-
-// Serve static frontend files
-const frontendPath = path.join(__dirname, '..', 'frontend');
-app.use(express.static(frontendPath));
 
 if (!fs.existsSync(userDataPath)) {
   fs.mkdirSync(userDataPath, { recursive: true });
@@ -37,10 +21,37 @@ const reconnectDelay = 3000;
 // Load settings
 function loadSettings() {
   try {
-    if (fs.existsSync(CONFIG_PATH)) {
+    const localConfigPath = path.join(__dirname, "config.json");
+    const hasLocal = fs.existsSync(localConfigPath);
+    const hasAppData = fs.existsSync(CONFIG_PATH);
+
+    if (hasLocal && hasAppData) {
+      const localMtime = fs.statSync(localConfigPath).mtime;
+      const appDataMtime = fs.statSync(CONFIG_PATH).mtime;
+
+      if (localMtime > appDataMtime) {
+        // Local config was manually edited, load it and sync
+        console.log("Local config is newer. Syncing from:", localConfigPath);
+        const data = fs.readFileSync(localConfigPath, "utf8");
+        settings = JSON.parse(data);
+        saveSettings();
+      } else {
+        // AppData config is newer or equal, load it
+        console.log("Loading settings from AppData:", CONFIG_PATH);
+        const data = fs.readFileSync(CONFIG_PATH, "utf8");
+        settings = JSON.parse(data);
+      }
+    } else if (hasLocal) {
+      console.log("Only local config exists. Initializing AppData from:", localConfigPath);
+      const data = fs.readFileSync(localConfigPath, "utf8");
+      settings = JSON.parse(data);
+      saveSettings();
+    } else if (hasAppData) {
+      console.log("Loading settings from AppData:", CONFIG_PATH);
       const data = fs.readFileSync(CONFIG_PATH, "utf8");
       settings = JSON.parse(data);
     } else {
+      console.log("No config file found. Using default settings.");
       settings = {
         port: "COM3",
         baudRate: 9600,
@@ -60,7 +71,15 @@ function loadSettings() {
 
 function saveSettings() {
   try {
+    const localConfigPath = path.join(__dirname, "config.json");
+    try {
+      fs.writeFileSync(localConfigPath, JSON.stringify(settings, null, 2));
+      console.log("Saved settings to local config:", localConfigPath);
+    } catch (localErr) {
+      console.warn("Could not write to local config (might be read-only):", localErr.message);
+    }
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(settings, null, 2));
+    console.log("Saved settings to AppData config:", CONFIG_PATH);
   } catch (err) {
     console.error("Error saving settings:", err);
   }
@@ -144,9 +163,11 @@ function setupSerialListeners() {
                         broadcast({ type: "serial-data", data: enriched });
                     } else if (subFunction === "2") {
                         const qrUrl = serialPortData.slice(pos, totalNeeded).trim();
+                        console.log("PRS QR Code URL:", qrUrl);
                         broadcast({ type: "serial-data", data: { protocol: "PRS", type: "qr_code", qr_url: qrUrl } });
                     } else if (subFunction === "3") {
                         const message = serialPortData.slice(pos, totalNeeded).trim();
+                        console.log("PRS Payment Status Message:", message);
                         broadcast({ type: "serial-data", data: { protocol: "PRS", type: "payment_status", message: message } });
                     }
                     
@@ -274,20 +295,18 @@ function scheduleReconnect() {
 }
 
 function broadcast(data) {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(data));
-    }
+  const dataStr = JSON.stringify(data);
+  BrowserWindow.getAllWindows().forEach((win) => {
+    win.webContents.send('ws-message', dataStr);
   });
 }
 
-// API Endpoints
-app.get("/api/settings", (req, res) => {
-  res.json(settings);
+// IPC routes for Electron
+ipcMain.handle('get-settings', () => {
+  return settings;
 });
 
-app.post("/api/settings", (req, res) => {
-  const newSettings = req.body;
+ipcMain.handle('save-settings', (event, newSettings) => {
   const portChanged =
     newSettings.port !== settings.port ||
     newSettings.baudRate !== settings.baudRate;
@@ -301,29 +320,29 @@ app.post("/api/settings", (req, res) => {
   }
 
   broadcast({ type: "settings-updated", settings });
-  res.json({ success: true, settings });
+  return { success: true, settings };
 });
 
-// WebSocket connection
-wss.on("connection", (ws) => {
-  console.log("New WebSocket client connected");
-  ws.send(JSON.stringify({ type: "settings-data", settings }));
+ipcMain.on('ws-connect', (event) => {
+  event.reply('ws-message', JSON.stringify({ type: "settings-data", settings }));
 
   if (serialPort && serialPort.isOpen) {
-    ws.send(
+    event.reply(
+      'ws-message',
       JSON.stringify({
         type: "serial-status",
         status: "connected",
         port: settings.port,
-      }),
+      })
     );
   } else {
-    ws.send(JSON.stringify({ type: "serial-status", status: "disconnected" }));
+    event.reply(
+      'ws-message',
+      JSON.stringify({ type: "serial-status", status: "disconnected" })
+    );
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  loadSettings();
-  initializeSerialPort();
-});
+// Load configuration and initialize immediately in Electron context
+loadSettings();
+initializeSerialPort();
