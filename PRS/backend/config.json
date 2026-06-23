@@ -1,10 +1,10 @@
 {
-  "port": "COM1",
+  "port": "/dev/ttyUSB0",
   "baudRate": 9600,
-  "zone": "NORTHERN",
-  "station": "STATION NAME",
-  "operator": "OPERATOR",
+  "zone": "NORTH CENTRAL RAILWAY",
+  "station": "DABRA",
+  "operator": "AMIT KUMAR SHARMA",
   "windowNo": "11",
-  "shiftNo": "22",
-  "message": "MESSAGE"
+  "shiftNo": "02",
+  "message": "Welcome to Indian Railway. भारतीय रेलवे में आपका स्वागत है ।"
 }

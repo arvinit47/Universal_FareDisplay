@@ -90,8 +90,8 @@ const PRS_CODES = {
   "06": "quota",
   "07": "to_station",
   "08": "passengers_count",
-  "09": "boarding_station",
-  "10": "reserved_upto",
+  "09": "reserved_upto",
+  "10": "boarding_station",
   "11": "operator_code",
   "12": "operator_name",
   "14": "total_fare",
@@ -202,14 +202,16 @@ function processPRS(raw) {
             
             if (key) {
               if (key === "class") {
-                parsed[key] = PRS_CLASSES[val] || val;
+                // parsed[key] = PRS_CLASSES[val] || val;
+                parsed[key] = val;
               } else if (key === "quota") {
                 parsed[key] = PRS_QUOTAS[val] || val;
               } else if (key.endsWith("_gender")) {
                 parsed[key] = GENDERS[val] || val;
               } else if (key.endsWith("_status")) {
                 const statusPart = val.split(",")[0].trim();
-                const mapped = PRS_STATUSES[statusPart];
+                //const mapped = PRS_STATUSES[statusPart];
+                const mapped = statusPart;
                 parsed[key] = mapped ? val.replace(statusPart, mapped) : val;
               } else {
                 parsed[key] = val;
@@ -345,14 +347,16 @@ function mapPRSFields(numericData) {
     const key = PRS_CODES[fieldCode];
     if (key) {
       if (key === "class") {
-        parsed[key] = PRS_CLASSES[val] || val;
+        // parsed[key] = PRS_CLASSES[val] || val;
+        parsed[key] = val;
       } else if (key === "quota") {
         parsed[key] = PRS_QUOTAS[val] || val;
       } else if (key.endsWith("_gender")) {
         parsed[key] = GENDERS[val] || val;
       } else if (key.endsWith("_status")) {
         const statusPart = val.split(",")[0].trim();
-        const mapped = PRS_STATUSES[statusPart];
+        //const mapped = PRS_STATUSES[statusPart];
+        const mapped = statusPart;
         parsed[key] = mapped ? val.replace(statusPart, mapped) : val;
       } else {
         parsed[key] = val;
