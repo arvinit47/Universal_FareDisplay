@@ -5,7 +5,7 @@ After=graphical.target multi-user.target
 [Service]
 Type=simple
 User=pi
-WorkingDirectory=/opt/universal-fare-display
+WorkingDirectory=/opt/Universal_FareDisplay
 Environment=PYTHONUNBUFFERED=1
 Environment=SDL_AUDIODRIVER=dummy
 Environment=LANG=C.UTF-8
@@ -25,7 +25,7 @@ Environment=DISPLAY=:0
 Environment=XAUTHORITY=/home/pi/.Xauthority
 #Environment=SDL_VIDEODRIVER=kmsdrm
 
-ExecStart=/usr/bin/python3 -m pi_display.main --config /opt/universal-fare-display/config/rpi-config.json
+ExecStart=/usr/bin/python3 -m pi_display.main --config /opt/Universal_FareDisplay/config/rpi-config.json
 Restart=always
 RestartSec=3
 
