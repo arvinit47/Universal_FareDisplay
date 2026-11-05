@@ -1,0 +1,16 @@
+{
+  "port": "/dev/ttyUSB0",
+  "baudRate": "9600",
+  "operator": "SHASHI KUMAR",
+  "station": "DABRA",
+  "zone": "NORTH CENTRAL RAILWAY",
+  "message": "भारतीय रेलवे आपका स्वागत करता है  INDIAN RAILWAYS WELCOMES YOU",
+  "terminal": "ABCDEF9999",
+  "windowNo": "350",
+  "shiftNo": "9",
+  "fullscreen": true,
+  "displayFps": 4,
+  "serialReconnectSeconds": 3,
+  "demoMode": false,
+  "autoClearSeconds": 0
+}

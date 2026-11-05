@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Universal Fare Display
+Comment=Indian Railways UTS Passenger Fare Display
+Exec=/usr/bin/python3 -m pi_display.main --config /opt/universal-fare-display/config/rpi-config.json
+WorkingDirectory=/opt/universal-fare-display
+Terminal=false
+Categories=Utility;
+X-GNOME-Autostart-enabled=true
+

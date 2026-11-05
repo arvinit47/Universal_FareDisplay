@@ -1,0 +1,31 @@
+[Unit]
+Description=Universal Fare Display (Raspberry Pi)
+After=graphical.target multi-user.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/universal-fare-display
+Environment=PYTHONUNBUFFERED=1
+Environment=SDL_AUDIODRIVER=dummy
+Environment=LANG=C.UTF-8
+Environment=LC_ALL=C.UTF-8
+
+# ============================================================================
+# Driver Selection:
+# 1) Raspberry Pi OS Lite (headless, no desktop):
+#    Environment=SDL_VIDEODRIVER=kmsdrm   (or fbcon for legacy framebuffers)
+#
+# 2) Raspberry Pi OS with Desktop (X11 GUI):
+#    Environment=DISPLAY=:0
+#    Environment=XAUTHORITY=/home/pi/.Xauthority
+#    (Leave SDL_VIDEODRIVER unset or set to x11)
+# ============================================================================
+Environment=SDL_VIDEODRIVER=kmsdrm
+
+ExecStart=/usr/bin/python3 -m pi_display.main --config /opt/universal-fare-display/config/rpi-config.json
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
