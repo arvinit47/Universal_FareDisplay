@@ -21,7 +21,9 @@ Environment=LC_ALL=C.UTF-8
 #    Environment=XAUTHORITY=/home/pi/.Xauthority
 #    (Leave SDL_VIDEODRIVER unset or set to x11)
 # ============================================================================
-Environment=SDL_VIDEODRIVER=kmsdrm
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/pi/.Xauthority
+#Environment=SDL_VIDEODRIVER=kmsdrm
 
 ExecStart=/usr/bin/python3 -m pi_display.main --config /opt/universal-fare-display/config/rpi-config.json
 Restart=always
